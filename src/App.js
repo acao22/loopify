@@ -23,22 +23,22 @@ const App = () => {
           {/* Playlist Cards */}
           <PlaylistCard
             title="hitting the gym"
-            imageUrl="https://placeimg.com/200/200/people"
+            imageUrl="/squid.png"
             bgColor="bg-orange-500"
           />
           <PlaylistCard
             title="getting over a three week-long situation"
-            imageUrl="https://placeimg.com/200/200/nature"
+            imageUrl="/squid.png"
             bgColor="bg-blue-400"
           />
           <PlaylistCard
             title="walking 30 minutes to trader joe’s"
-            imageUrl="https://placeimg.com/200/200/tech"
+            imageUrl="/squid.png"
             bgColor="bg-green-300"
           />
           <PlaylistCard
             title="locking in before 11:59 PM deadline"
-            imageUrl="https://placeimg.com/200/200/food"
+            imageUrl="/squid.png"
             bgColor="bg-teal-600"
           />
         </div>
