@@ -23,7 +23,7 @@ Music lovers of all ages who enjoy exploring and sharing music through mood-spec
 
 ### Incentives
 
-Active users gain vibe-matched song recommendations and can earn badges like "Playlist Pro" or "Vibe Guru," rewarding participation and building a gamified community.
+Active users gain vibe-matched song recommendations and can earn badges like "Playlist Pro" or "Vibe Guru," rewarding participation and building a music-based community.
 
 ---
 
@@ -113,13 +113,7 @@ This component tracks user engagement, playlist quality, and recommendation accu
 - Create analytics dashboards to monitor engagement and playlist quality.
 - Implement feedback mechanisms to improve the AI model.
 
----
-
-## Project Complexity
-
 **Total Point Value:** 20
-
-Each component is vital to achieving the vision of a collaborative, mood-driven music discovery platform. The points reflect the effort required to build each feature.
 
 ---
 
