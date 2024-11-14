@@ -27,6 +27,50 @@ Active users gain vibe-matched song recommendations and can earn badges like "Pl
 
 ---
 
+## Quality Control and Aggregation Implementation
+
+Our quality control and aggregation modules can be found in `src/backend/quality_control.py` and `src/backend/aggregate.py` respectively.
+
+### Quality Control Module (`quality_control.py`)
+
+The quality control module implements a two-step approach to ensure data quality:
+
+1. **Worker Quality Assessment**: 
+   - Identifies low-quality workers by comparing their votes against majority opinions
+   - Workers with agreement rates below 30% are flagged and their votes are filtered out
+   - This helps remove potentially random or malicious voting patterns
+
+2. **Song Validation**:
+   - For each playlist, calculates the ratio of positive votes for each song
+   - Songs must receive at least 60% positive votes to be considered valid for a playlist
+   - Returns validated songs with their confidence scores
+
+Future improvements planned:
+- Implement weighted voting based on worker reputation
+- Add time-based analysis to detect rapid, potentially low-quality submissions
+- Include song metadata analysis to detect outliers
+
+### Aggregation Module (`aggregate.py`)
+
+The aggregation module processes validated song data to generate playlist recommendations:
+
+1. **Data Processing**:
+   - Takes validated songs from the QC module as input
+   - Requires minimum 5 votes per song for consideration
+   - Sorts songs by confidence scores within each playlist
+
+2. **Recommendation Generation**:
+   - Creates top 10 song recommendations for each playlist
+   - Maintains confidence scores for all songs
+   - Tracks total number of validated songs per playlist
+
+Future improvements planned:
+- Implement collaborative filtering for enhanced recommendations
+- Add genre and mood-based weighting
+- Include popularity metrics in aggregation logic
+
+---
+
 ## Project Components
 
 ### 1. **User Interface (UI) and User Experience (UX)**
