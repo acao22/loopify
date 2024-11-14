@@ -4,7 +4,7 @@ from aggregate import PlaylistAggregator
 
 def main():
     # Load and clean the test data
-    df = pd.read_csv('data/testData.csv')
+    df = pd.read_csv('../data/testData.csv')
     
     # Remove unnamed columns
     df = df.loc[:, ~df.columns.str.contains('^Unnamed')]

@@ -44,14 +44,16 @@ class PlaylistAggregator:
     # angie added this
     def update_vote(worker_id, playlist, song, vote):
         df = pd.read_csv('data/testData.csv')
-        # filter for specified playlist & worker
-        playlist_data = df[(df['Worker_Session_ID'] == worker_id) & (df['Playlist'] == playlist)]
+        # filter for specified playlist, worker, and song
+        playlist_data = df[(df['Worker_Session_ID'] == worker_id) & 
+                   (df['Playlist'] == playlist) & 
+                   (df['Song'] == song)]
 
         # update vote in df
-        if not playlist_data.empty and song in playlist_data.columns:
-            df.loc[playlist_data.index, song] = vote
+        if not playlist_data.empty:
+            df.loc[playlist_data.index, 'Vote'] = vote
             # save back to csv
             df.to_csv('data/testData.csv', index=False)
             return {'message': 'Vote updated successfully'}
         else:
-            return {'message': 'Playlist or song not found for worker'}
+            return {'message': 'Playlist, song, or worker not found'}
