@@ -190,3 +190,14 @@ Loopify's success will be measured by:
 - **Data Scaling:** Managing a large volume of user contributions without compromising performance.
 
 ---
+
+## Code Structure/Walkthrough
+
+- **/backend** This folder contains the `aggregate.py`, `demo.py`, and `quality_control.py` functions; implementing the logic needed to complete the aggregation and QC logic.
+In order to run these folders, make sure you're currently in the folder (`cd backend`) and call `python3 file_name.py`. In this casem `file_name.py` would be either `aggregate.py`, `demo.py`, or `quality_control.py`.
+- **/data** This folder *currently* contrains the test data, but we plan to include all relevant data as .csv files inside this folder as well.
+- **/docs** This folder contains relevant submission files related to the screenshot mockups, flowcharts, and this README.md file.
+- **/frontend** This folder contains all files related to rendering and running the frontend of our web-app. The `/public` folder contains images and icons related , while the `/src` file contains codes in Javascript and CSS that uses React to render and style different frontend components of Loopify.
+In order to run this, make sure that you're currently in the folder (`cd frontend`), then use node to run:
+`npm install`
+`npm start`.
