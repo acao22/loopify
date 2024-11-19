@@ -26,6 +26,15 @@ const HomePage = () => {
           </Link>
         </div>
 
+      {/* Generate Song Button */}
+      <div className="flex justify-center">
+          <Link to="/generatesong">
+            <button className="bg-green-500 text-white font-semibold py-3 px-6 rounded-lg shadow-lg hover:bg-green-600">
+              Generate Song
+            </button>
+          </Link>
+        </div>
+
       {/* Playlist Section */}
       <section className="text-white p-6">
         <p className="text-center mb-4">Help us crowdsource more vibes. Select the best songs for...</p>
