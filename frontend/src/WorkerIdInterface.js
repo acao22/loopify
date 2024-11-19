@@ -1,69 +1,18 @@
 import React, { useState, useEffect } from 'react';
+import VotingInterface from './VotingInterface';
+import { useNavigate } from 'react-router-dom';
 
-function VoteInterface() {
+function WorkerIdInterface() {
     const [workerId, setWorkerId] = useState('');
-    const [playlist, setPlaylist] = useState('');
-    const [songs, setSongs] = useState([]);
-    const [votes, setVotes] = useState({});
-    const [message, setMessage] = useState('');
+    const navigate = useNavigate();
 
-    // fetch hardcoded playlist and songs
-    const fetchPlaylistAndSongs = async () => {
-        setPlaylist('Feel-Good Classics');
-        setSongs([
-            'Billie Jean',
-            'Bohemian Rhapsody',
-            'Rolling in the Deep',
-            'Blinding Lights',
-        ]);
-    };
-
-    useEffect(() => {
-        fetchPlaylistAndSongs();
-    }, []);
-
-    // Handle vote changes for specific songs
-    const handleVote = (song, vote) => {
-        setVotes((prevVotes) => ({
-            ...prevVotes,
-            [song]: vote, 
-        }));
-    };
-
-    // submit votes to backend
-    const handleSubmitVotes = async () => {
-        if (!Object.keys(votes).length) {
-            setMessage('Please vote for at least one song!');
+    const handleButtonClick = () => {
+        if (!workerId) {
+            alert('Please enter a Worker ID');
             return;
         }
-
-        console.log('Submitting votes:', votes);
-
-        // convet votes object to array of objects w/ song-vote pairs
-        const votesArray = Object.entries(votes).map(([song, vote]) => ({
-            song,
-            vote,
-        }));
-
-        console.log('Votes array:', votesArray);
-
-        try {
-            const response = await fetch('http://localhost:5001/api/vote', {
-                mode: 'cors',
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ workerId, playlist, votes: votesArray }),
-            });
-
-            const result = await response.json();
-            console.log('Response data:', result);
-            setMessage(result.message || 'Votes submitted successfully');
-        } catch (error) {
-            console.error('Error submitting votes:', error);
-            setMessage('Error submitting vote');
-        }
+       // Navigate to the VotingInterface component
+       navigate('/votinginterface', { state: { workerId } });
     };
 
     return (
@@ -79,7 +28,15 @@ function VoteInterface() {
                     className="w-full px-4 py-2 mb-4 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
 
-                <div className="text-center mb-6">
+                <button
+                    onClick={handleButtonClick}
+                    className="w-full px-4 py-2 bg-blue-500 text-white rounded-lg shadow hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                >
+                    Submit
+                </button>
+
+
+                {/* <div className="text-center mb-6">
                     <p className="text-lg font-semibold">
                         Playlist: <span className="text-gray-700">{playlist}</span>
                     </p>
@@ -120,10 +77,10 @@ function VoteInterface() {
                     <p className="text-center text-gray-700 mt-4">
                         {message}
                     </p>
-                )}
+                )} */}
             </div>
         </div>
     );
 }
 
-export default VoteInterface;
+export default WorkerIdInterface;

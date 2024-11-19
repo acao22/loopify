@@ -1,14 +1,16 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Home from './HomePage'; 
-import VoteInterface from './VoteInterface';
+import WorkerIdInterface from './WorkerIdInterface';
+import VotingInterface from './VotingInterface';
 
 function App() {
   return (
     <Router>
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/voteinterface" element={<VoteInterface />} />
+        <Route path="/workeridinterface" element={<WorkerIdInterface />} />
+        <Route path="/votinginterface" element={<VotingInterface />} />
       </Routes>
     </Router>
   );

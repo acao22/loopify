@@ -19,7 +19,7 @@ const HomePage = () => {
 
       {/* Vote Button */}
       <div className="flex justify-center">
-          <Link to="/voteinterface">
+          <Link to="/workeridinterface">
             <button className="bg-green-500 text-white font-semibold py-3 px-6 rounded-lg shadow-lg hover:bg-green-600">
               Vote
             </button>
