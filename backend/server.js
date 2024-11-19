@@ -1,66 +1,83 @@
 const express = require('express');
 const cors = require('cors');
-const fs = require('fs');
-const path = require('path');
+const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
-const csv = require('csv-parser');
-const { parse } = require('json2csv');
+require('dotenv').config();
+
+// vote model
+const Vote = require('./models/Vote');
 
 const app = express();
-
 app.use(cors());
 app.use(bodyParser.json());
 
-const csvFilePath = path.join(__dirname, '../data/testData.csv');
+// MongoDB connection
+const MONGO_URI = process.env.MONGO_URI || "mongodb+srv://<your-username>:<your-password>@loopifycluster.ducae.mongodb.net/loopify?retryWrites=true&w=majority";
 
-// API get endpoint to handle vote
-app.get('/api/vote', (req, res) => {
-    return res.json({ message: 'GET request is successful' });
+mongoose
+    .connect(MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+    .then(() => console.log('Connected to MongoDB'))
+    .catch((error) => console.error('MongoDB connection error:', error));
+
+// API Endpoints:
+
+// getting all votes
+app.get('/api/vote', async (req, res) => {
+    try {
+        const votes = await Vote.find();
+        res.status(200).json(votes);
+    } catch (error) {
+        console.error('Error fetching votes:', error);
+        res.status(500).json({ message: 'Error fetching votes', error: error.message });
+    }
 });
 
-// API post endpoint to handle vote
-app.post('/api/vote', (req, res) => {
-    const { workerId, playlist, newVote } = req.body;
+// submit/update votes
+app.post('/api/vote', async (req, res) => {
+    const { workerId, playlist, votes } = req.body;
 
-    // Read and parse the CSV file
-    fs.readFile(csvFilePath, 'utf8', (err, data) => {
-        if (err) return res.status(500).json({ message: 'Error reading file' });
+    try {
+        // test log incoming data
+        console.log('Request body:', req.body); 
 
-        const lines = data.split('\n');
-        const headers = lines[0].split(',');
-
-        // Find the index of the workerId
-        const workerIndex = lines.findIndex(line => line.startsWith(workerId));
-
-        // Create a new line for the worker if not found
-        // if (workerIndex === -1) {
-        //     const newLine = [workerId, playlist, ...votes].join(',');
-        //     lines.push(newLine);
-        // } else {
-        //     // Update the existing line with new votes
-        //     const existingLine = lines[workerIndex].split(',');
-        //     votes.forEach((vote, index) => {
-        //         existingLine[2 + index] = vote;
-        //     });
-        //     lines[workerIndex] = existingLine.join(',');
-        // }
-        if (workerIndex === -1) {
-            const newLine = workerId + "," + playlist + "," + newVote;
-            lines.push(newLine);
-        } else {
-            // Update the existing line with new votes
-            lines[workerIndex] = lines[workerIndex] + "," + newVote;
+        // validating input
+        if (!workerId || !playlist || !votes || !Array.isArray(votes)) {
+            console.error('Invalid input data');
+            return res.status(400).json({ message: 'Invalid input data' });
         }
 
-        // Write back to the CSV file
-        fs.writeFile(csvFilePath, lines.join('\n'), (err) => {
-            if (err) return res.status(500).json({ message: 'Error writing file' });
+        // find existing vote document
+        let vote = await Vote.findOne({ workerId, playlist });
 
-            return res.json({ message: 'Vote submitted successfully' });
-        });
-    });
+        if (!vote) {
+            // create new document if not found
+            vote = new Vote({ workerId, playlist, votes });
+            console.log('Creating new vote document:', vote);
+        } else {
+            // update votes array
+            console.log('Existing document before update:', vote);
+            vote.votes = votes;
+            console.log('Updated document:', vote);
+        }
+
+        console.log('Votes array before saving:', votes);
+        if (!votes.every(v => v.song && v.vote)) {
+            console.error('Invalid votes array structure:', votes);
+            return res.status(400).json({ message: 'Invalid votes array structure' });
+        }
+
+        // sav document to MongoDB
+        const savedVote = await vote.save();
+        console.log('Saved vote:', savedVote);
+
+        res.status(200).json({ message: 'Vote submitted successfully', vote: savedVote });
+    } catch (error) {
+        console.error('Error saving vote:', error);
+        res.status(500).json({ message: 'Error saving vote', error: error.message });
+    }
 });
 
-app.listen(5001, () => {
-    console.log('Server is running on port 5001');
+const PORT = process.env.PORT || 5001;
+app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
 });
