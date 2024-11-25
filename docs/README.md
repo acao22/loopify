@@ -201,3 +201,100 @@ In order to run these folders, make sure you're currently in the folder (`cd bac
 In order to run this, make sure that you're currently in the folder (`cd frontend`), then use node to run:
 `npm install`
 `npm start`.
+
+# **Loopify User Guide: How to Help Crowdsourcing Playlists**
+
+Welcome to **Loopify**, where your music expertise helps shape collaborative playlists! Whether you’re a seasoned playlist curator or just a music enthusiast, this step-by-step guide will show you how to contribute effectively to our crowdsourcing efforts. Let’s get started!
+
+---
+
+## **What You’ll Be Doing**
+
+Loopify allows you to:
+
+1. Select a playlist category (e.g., "hitting the gym").
+2. Vote on whether specific songs fit that playlist.
+3. Help create a vibe-packed playlist for the community!
+
+Your input will directly impact the final playlists shared with Loopify users.
+
+---
+
+## **How to Get Started**
+
+### **Step 1: Visit the Loopify Platform**
+
+1. Open your browser and navigate to **[Loopify](http://localhost:3000)**.
+2. You’ll land on the **Home Page**, which displays playlist categories and a search bar.
+
+---
+
+### **Step 2: Select a Playlist**
+
+#### **Option 1: Use the Search Bar**
+1. In the search bar, type a keyword related to a playlist you’d like to contribute to (e.g., "gym" or "breakup").
+2. Select the desired playlist from the dropdown menu.
+3. Click the **Vote** button to start voting on songs for that playlist.
+
+#### **Option 2: Choose from the Playlist Cards**
+1. Scroll down to see the playlist categories displayed as cards.
+2. Click on the card that matches your desired playlist category.
+3. You’ll be redirected to the voting interface for that playlist.
+
+---
+
+### **Step 3: Vote on Songs**
+
+1. **Listen to the Song Preview:**
+   - If a song has a preview, you can listen to it directly on the platform by clicking the play button in the embedded audio player.
+   - If no preview is available, click the **Listen on Spotify** link to hear the full song.
+
+2. **Cast Your Vote:**
+   - Click **Yes** if the song fits the playlist’s theme.
+   - Click **No** if the song doesn’t match the playlist’s vibe.
+   - If you’re unsure, click **Skip** to move on to the next song.
+
+3. After voting, the platform will automatically load the next song for your feedback.
+
+---
+
+### **Step 4: Repeat and Contribute**
+
+- Continue voting on as many songs as you like.
+- You can revisit other playlists anytime by clicking the **Back** button or navigating to the **Home Page**.
+
+---
+
+## **Need Help?**
+
+### **Common Issues and Solutions**
+
+#### **I Can’t Hear the Song Preview**
+- Make sure your device’s volume is not muted.
+- If the song preview isn’t available, click the **Listen on Spotify** link to hear the full track.
+
+#### **The Platform is Not Loading**
+- Ensure your internet connection is stable.
+- Refresh the page or try accessing the platform on a different browser (e.g., Chrome, Firefox).
+
+#### **I Selected the Wrong Playlist**
+- Click the **Back** button at the top left corner to return to the Home Page.
+- Choose a different playlist from the cards or search bar.
+
+---
+
+### **Contact Us**
+
+If you encounter issues or have questions, don’t hesitate to reach out:
+
+- **Email**: namitas@upenn.edu
+
+---
+
+## **Why Your Contribution Matters**
+
+Your input helps us crowdsource the ultimate playlists for every mood, activity, and vibe. Each vote you cast brings us closer to creating the perfect listening experience for our community.
+
+Thank you for helping build the music magic on Loopify! 🎶
+
+--- 
