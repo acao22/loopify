@@ -1,155 +1,283 @@
-import React, { useState, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import React, { useState, useEffect } from "react";
+import { useParams, Link, useNavigate } from "react-router-dom";
+import Navbar from "./Navbar";
+import { Sparkle, CaretLeft } from "phosphor-react";
 
 function VotingInterface() {
-    const [playlist, setPlaylist] = useState('');
-    const [songs, setSongs] = useState([]);
-    const [votes, setVotes] = useState({});
-    const [message, setMessage] = useState('');
-    const [currentSongIndex, setCurrentSongIndex] = useState(0); // Track current song index
+  const navigate = useNavigate();
+  const { playlistName } = useParams();
+  const [playlist, setPlaylist] = useState(playlistName || "Default Playlist");
+  const [songs, setSongs] = useState([]);
+  const [votes, setVotes] = useState([]); // Votes array
+  const [message, setMessage] = useState("");
+  const [currentSongIndex, setCurrentSongIndex] = useState(0); // Track current song index
+  const [accessToken, setAccessToken] = useState(""); // Spotify Access Token
+  const [workerId, setWorkerId] = useState(""); // Worker ID
 
-    const location = useLocation();
-    const { workerId } = location.state || {}; // Get workerId from state
+  useEffect(() => {
+    generateWorkerId();
+    fetchAccessToken(); // Fetch Spotify Access Token on component mount
+  }, []);
 
-    // fetch hardcoded playlist and songs
-    const fetchPlaylistAndSongs = async () => {
-        setPlaylist('Feel-Good Classics');
-        setSongs([
-            'Billie Jean',
-            'Bohemian Rhapsody',
-            'Rolling in the Deep',
-            'Blinding Lights',
-        ]);
-    };
+  // Generate a unique Worker ID
+  const generateWorkerId = () => {
+    const id = `worker_${Math.random().toString(36).substr(2, 9)}`;
+    setWorkerId(id);
+  };
 
-    useEffect(() => {
-        fetchPlaylistAndSongs();
-    }, []);
+  // Fetch Spotify Access Token
+  const fetchAccessToken = async () => {
+    try {
+      const clientId = process.env.REACT_APP_SPOTIFY_CLIENT_ID;
+      const clientSecret = process.env.REACT_APP_SPOTIFY_CLIENT_SECRET;
 
-    // Handle vote changes for specific songs
-    const handleVote = (song, vote) => {
-        setVotes((prevVotes) => ({
-            ...prevVotes,
-            [song]: vote, 
-        }));
-    };
+      const response = await fetch("https://accounts.spotify.com/api/token", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+          Authorization: `Basic ${btoa(`${clientId}:${clientSecret}`)}`,
+        },
+        body: "grant_type=client_credentials",
+      });
 
-    // Submit votes to backend
-    const handleSubmitVotes = async () => {
-        if (!Object.keys(votes).length) {
-            setMessage('Please vote for at least one song!');
-            return;
-        }
+      const data = await response.json();
+      setAccessToken(data.access_token);
+      fetchSongs(data.access_token); // Fetch song previews after receiving token
+    } catch (error) {
+      console.error("Error fetching Spotify access token:", error);
+    }
+  };
 
-        console.log('Submitting votes:', votes);
+  // Fetch songs from Spotify API
+  const fetchSongs = async (token) => {
+    try {
+      const trackQueries = [
+        { title: "Blinding Lights", artist: "The Weeknd" },
+        { title: "Levitating", artist: "Dua Lipa" },
+        { title: "Uptown Funk", artist: "Mark Ronson" },
+        { title: "Rolling in the Deep", artist: "Adele" },
+        { title: "Take Me to Church", artist: "Hozier" },
+        { title: "Watermelon Sugar", artist: "Harry Styles" },
+        { title: "Dance Monkey", artist: "Tones and I" },
+        { title: "Bad Guy", artist: "Billie Eilish" },
+        { title: "Señorita", artist: "Shawn Mendes" },
+        { title: "Perfect", artist: "Ed Sheeran" },
+        { title: "Stay", artist: "The Kid LAROI" },
+        { title: "Closer", artist: "The Chainsmokers" },
+        { title: "Someone Like You", artist: "Adele" },
+        { title: "Save Your Tears", artist: "The Weeknd" },
+        { title: "Shallow", artist: "Lady Gaga" },
+        { title: "Peaches", artist: "Justin Bieber" },
+        { title: "Montero (Call Me By Your Name)", artist: "Lil Nas X" },
+        { title: "Old Town Road", artist: "Lil Nas X" },
+        { title: "Happier Than Ever", artist: "Billie Eilish" },
+      ];
 
-        // Convert votes object to an array of objects with song-vote pairs
-        const votesArray = Object.entries(votes).map(([song, vote]) => ({
-            song,
-            vote,
-        }));
+      const songPromises = trackQueries.map(async (track) => {
+        const response = await fetch(
+          `https://api.spotify.com/v1/search?q=track:${encodeURIComponent(
+            track.title
+          )}%20artist:${encodeURIComponent(track.artist)}&type=track&limit=1`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
 
-        console.log('Votes array:', votesArray);
+        const data = await response.json();
+        const trackInfo = data.tracks.items[0];
 
-        try {
-            const response = await fetch('http://localhost:5001/api/vote', {
-                mode: 'cors',
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ workerId, playlist, votes: votesArray }),
-            });
+        return {
+          title: trackInfo?.name || track.title,
+          artist: trackInfo?.artists[0]?.name || track.artist,
+          imageUrl: trackInfo?.album?.images[0]?.url || "",
+          previewUrl: trackInfo?.preview_url || "",
+          spotifyId: trackInfo?.id || "", // Track ID for Spotify link
+          duration: formatDuration(trackInfo?.duration_ms || 0),
+        };
+      });
 
-            const result = await response.json();
-            console.log('Response data:', result);
-            setMessage(result.message || 'Votes submitted successfully');
-        } catch (error) {
-            console.error('Error submitting vote:', error);
-            setMessage('Error submitting vote');
-        }
-    };
+      const fetchedSongs = await Promise.all(songPromises);
+      setSongs(fetchedSongs);
+    } catch (error) {
+      console.error("Error fetching songs from Spotify:", error);
+    }
+  };
 
-    // Move to the next song after a vote
-    const handleNextSong = () => {
-        if (currentSongIndex < songs.length - 1) {
-            setCurrentSongIndex(currentSongIndex + 1);
-        } else {
-            handleSubmitVotes(); // Submit votes if it's the last song
-        }
-    };
+  // Format duration from milliseconds to mm:ss
+  const formatDuration = (ms) => {
+    const minutes = Math.floor(ms / 60000);
+    const seconds = Math.floor((ms % 60000) / 1000)
+      .toString()
+      .padStart(2, "0");
+    return `${minutes}:${seconds}`;
+  };
 
-    const currentSong = songs[currentSongIndex];
+  const handleVote = (song, vote) => {
+    // Add current vote to votes array
+    setVotes((prevVotes) => [...prevVotes, { song, vote }]);
 
-    return (
-        <div className="flex flex-col md:flex-row items-start justify-center bg-gradient-to-b from-[#4D9B0E] to-[#1A3505] min-h-screen p-6">
-            {/* Sidebar for displaying voted songs */}
-            <div className="w-1/8 bg-white p-4 rounded-lg shadow-md mb-6 md:mb-0 md:mr-6">
-                <h3 className="text-xl font-semibold mb-4">
-                     Your Votes:
-                     Worker {workerId}
-                    </h3>
-                <div className="space-y-2">
-                    {Object.entries(votes).map(([song, vote]) => (
-                        <div key={song} className="flex justify-between">
-                            <span className="font-semibold">{song}</span>
-                            <span className={`text-lg ${vote === 'y' ? 'text-green-700' : 'text-red-700'}`}>
-                                {vote === 'y' ? 'Yes' : 'No'}
-                            </span>
-                        </div>
-                    ))}
-                </div>
-            </div>
+    if (currentSongIndex < songs.length - 1) {
+      setCurrentSongIndex(currentSongIndex + 1);
+    } else {
+      handleFinish(); // Submit all votes at the end
+    }
+  };
 
-            {/* Main content area */}
-            <div className="w-full max-w-md bg-white rounded-lg shadow-md p-6">
-                <h2 className="text-2xl font-bold text-center mb-6">Vote on Song Fit</h2>
+  const handleFinish = () => {
+    submitVotes();
+    navigate("/thank-you");
+  };
 
-                <div className="text-center mb-6">
-                    <p className="text-lg font-semibold">
-                        Playlist: <span className="text-gray-700">{playlist}</span>
-                    </p>
-                </div>
+  const submitVotes = async () => {
+    try {
+      const response = await fetch("http://localhost:5001/api/vote", {
+        mode: "cors",
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          workerId,
+          playlist,
+          votes,
+        }),
+      });
 
-                {currentSong && (
-                    <div className="mb-4">
-                        <p className="text-lg font-semibold">{currentSong}</p>
-                        <div className="flex justify-around">
-                            <button
-                                onClick={() => handleVote(currentSong, 'y')}
-                                className={`w-24 px-4 py-2 ${
-                                    votes[currentSong] === 'y' ? 'bg-green-800' : 'bg-green-500'
-                                } text-white rounded-lg shadow hover:bg-green-800`}
-                            >
-                                Yes
-                            </button>
-                            <button
-                                onClick={() => handleVote(currentSong, 'n')}
-                                className={`w-24 px-4 py-2 ${
-                                    votes[currentSong] === 'n' ? 'bg-red-800' : 'bg-red-500'
-                                } text-white rounded-lg shadow hover:bg-red-800`}
-                            >
-                                No
-                            </button>
-                        </div>
-                    </div>
-                )}
+      if (response.ok) {
+        setMessage("All votes submitted successfully!");
+      } else {
+        const result = await response.json();
+        setMessage(`Error: ${result.message}`);
+      }
+    } catch (error) {
+      console.error("Error submitting votes:", error);
+      setMessage("Error submitting votes");
+    }
+  };
 
-                <button
-                    onClick={handleNextSong}
-                    className="w-full px-4 py-2 bg-blue-500 text-white rounded-lg shadow hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 mt-6"
+  const handleSkip = () => {
+    if (currentSongIndex < songs.length - 1) {
+      setCurrentSongIndex(currentSongIndex + 1);
+    } else {
+      handleFinish();
+      setMessage("All songs completed!");
+    }
+  };
+
+  const handleBack = () => {
+    if (currentSongIndex > 0) {
+      setCurrentSongIndex(currentSongIndex - 1);
+    }
+  };
+
+  const currentSong = songs[currentSongIndex];
+
+  return (
+    <div className="bg-gradient-to-b-custom min-h-screen">
+      <Navbar />
+      <Link
+        to="/"
+        className="absolute top-30 left-12 py-6 cursor-pointer flex items-center space-x-2 text-white hover:text-gray-500"
+      >
+        <CaretLeft size={24} weight="bold" />
+        <span className="font-medium">Back</span>
+      </Link>
+      {/* Generate Song Button */}
+      <div className="fixed bottom-8 right-8">
+        <Link to="/generatesong">
+          <button className="bg-white text-black font-semibold py-2 px-4 rounded-3xl shadow-lg hover:bg-green-600 flex items-center space-x-2 ease-in-out">
+            <Sparkle size={20} weight="fill" className="text-black" />
+            <span>Use AI to Generate Song</span>
+          </button>
+        </Link>
+      </div>
+      <div className="flex flex-col items-center justify-center p-6">
+        <h1 className="text-3xl font-bold text-white mb-6">
+          Help build our playlists
+        </h1>
+        <div className="bg-white rounded-3xl shadow-lg p-6 max-w-sm w-full">
+          <h2 className="text-xl font-semibold text-center mb-2">{playlist}</h2>
+          <p className="text-sm text-gray-600 text-center mb-6">
+            Select yes if the song fits the playlist.
+          </p>
+
+          {currentSong && (
+            <>
+              {/* Album Art */}
+              <img
+                src={currentSong.imageUrl}
+                alt={currentSong.title}
+                className="w-full mx-auto mb-6"
+              />
+              {/* Song Title and Artist */}
+              <div className="flex justify-between items-center mb-2">
+                <p className="text-lg font-bold">{currentSong.title}</p>
+                <p className="text-gray-600">{currentSong.artist}</p>
+              </div>
+              {/* Audio Controls */}
+              {currentSong.previewUrl ? (
+                <audio
+                  controls
+                  src={currentSong.previewUrl}
+                  className="w-full mb-4"
                 >
-                    {currentSongIndex < songs.length - 1 ? 'Next Song' : 'Submit Votes'}
+                  Your browser does not support the audio element.
+                </audio>
+              ) : (
+                <div className="mb-4 flex">
+                  <p className="text-sm text-gray-500 mb-2">
+                    Preview not available.
+                  </p>
+                  <a
+                    href={`https://open.spotify.com/track/${currentSong.spotifyId}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-sm text-gray-500 underline hover:text-gray-700 mb-2 ml-1"
+                  >
+                    Listen on Spotify
+                  </a>
+                </div>
+              )}
+              <div className="flex justify-between items-center mb-4">
+                <button
+                  onClick={handleBack}
+                  className={`w-12 h-12 rounded-full bg-gray-200 text-gray-600 hover:bg-gray-300 ${
+                    currentSongIndex === 0 && "opacity-50 pointer-events-none"
+                  }`}
+                >
+                  &#8592;
                 </button>
-
-                {message && (
-                    <p className="text-center text-gray-700 mt-4">
-                        {message}
-                    </p>
-                )}
-            </div>
+                <button
+                  onClick={() => handleVote(currentSong.title, "yes")}
+                  className="bg-blue-500 text-white font-semibold py-2 px-8 rounded-3xl shadow-lg hover:bg-blue-600"
+                >
+                  Yes
+                </button>
+                <button
+                  onClick={() => handleVote(currentSong.title, "no")}
+                  className="bg-red-500 text-white font-semibold py-2 px-8 rounded-3xl shadow-lg hover:bg-red-600"
+                >
+                  No
+                </button>
+                <button
+                  onClick={
+                    currentSongIndex < songs.length - 1
+                      ? handleSkip
+                      : handleFinish
+                  }
+                  className={`px-8 py-2 rounded-3xl bg-gray-200 text-gray-600 hover:bg-gray-300`}
+                >
+                  Skip
+                </button>
+              </div>
+            </>
+          )}
         </div>
-    );
+      </div>
+    </div>
+  );
 }
 
 export default VotingInterface;

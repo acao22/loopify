@@ -1,65 +1,104 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState } from "react";
+import Navbar from "./Navbar";
+import { Link } from "react-router-dom";
+import { MagnifyingGlass, ArrowRight } from "phosphor-react";
+import { Autocomplete, TextField } from "@mui/material";
 
 const HomePage = () => {
+  const playlists = [
+    { title: "hitting the gym", bgColor: "bg-orange-500" },
+    { title: "getting over a three week-long situationship", bgColor: "bg-blue-400" },
+    { title: "walking 30 minutes to trader joe’s", bgColor: "bg-green-300" },
+    { title: "locking in before 11:59 PM deadline", bgColor: "bg-teal-600" },
+  ];
+
+  const [selectedPlaylist, setSelectedPlaylist] = useState("");
+
   return (
-    <div className="bg-gradient-to-b from-[#4D9B0E] to-[#1A3505] min-h-screen">
+    <div className="bg-gradient-to-b-custom min-h-screen font-gabarito">
+      {/* Navbar */}
+      <Navbar />
+
       {/* Header Section */}
       <header className="text-white p-6">
-        <h1 className="text-7xl font-bold text-center mt-30 mb-4">loopify</h1>
-        <p className="text-center text-lg">discover new loops of sound</p>
-        <div className="flex justify-center mt-4">
-          <input
-            type="text"
-            placeholder="Search for playlist category"
-            className="p-3 w-2/3 rounded-lg text-gray-800"
-          />
+        <h1 className="text-7xl font-bold text-center mt-40 mb-2 font-dynapuff">
+          loopify
+        </h1>
+        <p className="text-center text-xl text-[#2E5D09] font-semibold">
+          discover new loops of sound
+        </p>
+        <div className="flex justify-center mt-4 items-center space-x-4">
+          {/* Material-UI Autocomplete for Search */}
+          <div className="relative w-2/5 font-gabarito">
+            <Autocomplete
+              options={playlists.map((playlist) => playlist.title)}
+              getOptionLabel={(option) => option}
+              onChange={(event, value) => setSelectedPlaylist(value || "")}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  placeholder="Search for playlist category"
+                  variant="standard" // No default outline
+                  InputLabelProps={{
+                    shrink: true, // Ensures the placeholder behaves correctly
+                  }}
+                  InputProps={{
+                    ...params.InputProps,
+                    disableUnderline: true, // Removes the underline
+                    startAdornment: (
+                      <div className="pr-2">
+                        <MagnifyingGlass size={20} weight="bold" />
+                      </div>
+                    ),
+                  }}
+                  sx={{
+                    bgcolor: "white",
+                    borderRadius: "30px",
+                    padding: "6px 8px", // Matches the original padding
+                    "& .MuiInputBase-root": {
+                      fontSize: "16px", // Matches original font size
+                      height: "35px", // Adjust height to match the original
+                      paddingLeft: "10px",
+                      paddingRight: "10px",
+                    },
+                    "& .MuiInputBase-input": {
+                      padding: "10px 0", // Matches padding inside the input
+                    },
+                  }}
+                />
+              )}
+              style={{ width: "100%" }}
+              disableClearable // Prevents clear icon from showing
+              popupIcon={null} // Removes the dropdown arrow
+            />
+          </div>
+
+          {/* Vote Button */}
+          {selectedPlaylist && (
+            <Link to={`/vote/${encodeURIComponent(selectedPlaylist)}`}>
+              <button className="bg-[#76B247] text-white font-semibold py-3 px-6 rounded-3xl shadow-lg hover:bg-[#2E5D09] flex items-center space-x-2">
+                <span>Vote</span>
+                <ArrowRight size={20} weight="bold" />
+              </button>
+            </Link>
+          )}
         </div>
       </header>
 
-      {/* Vote Button */}
-      <div className="flex justify-center">
-          <Link to="/workeridinterface">
-            <button className="bg-green-500 text-white font-semibold py-3 px-6 rounded-lg shadow-lg hover:bg-green-600">
-              Vote
-            </button>
-          </Link>
-        </div>
-
-      {/* Generate Song Button */}
-      <div className="flex justify-center">
-          <Link to="/generatesong">
-            <button className="bg-green-500 text-white font-semibold py-3 px-6 rounded-lg shadow-lg hover:bg-green-600">
-              Generate Song
-            </button>
-          </Link>
-        </div>
-
       {/* Playlist Section */}
-      <section className="text-white p-6">
-        <p className="text-center mb-4">Help us crowdsource more vibes. Select the best songs for...</p>
+      <section className="text-white p-6 px-20">
+        <p className="text-left mb-4 text-xl">
+          Help us crowdsource more vibes. Select the best songs for...
+        </p>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {/* Playlist Cards */}
-          <PlaylistCard
-            title="hitting the gym"
-            imageUrl="/squidtentacle.png"
-            bgColor="bg-orange-500"
-          />
-          <PlaylistCard
-            title="getting over a three week-long situationship"
-            imageUrl="/squidtentacle.png"
-            bgColor="bg-blue-400"
-          />
-          <PlaylistCard
-            title="walking 30 minutes to trader joe’s"
-            imageUrl="/squidtentacle.png"
-            bgColor="bg-green-300"
-          />
-          <PlaylistCard
-            title="locking in before 11:59 PM deadline"
-            imageUrl="/squidtentacle.png"
-            bgColor="bg-teal-600"
-          />
+          {playlists.map((playlist) => (
+            <PlaylistCard
+              key={playlist.title}
+              title={playlist.title}
+              imageUrl="/squidtentacle.png"
+              bgColor={playlist.bgColor}
+            />
+          ))}
         </div>
       </section>
     </div>
@@ -69,10 +108,15 @@ const HomePage = () => {
 // PlaylistCard Component
 const PlaylistCard = ({ title, imageUrl, bgColor }) => {
   return (
-    <div className={`${bgColor} p-4 rounded-lg shadow-lg`}>
-      <img src={imageUrl} alt={title} className="w-full rounded-lg mb-4" />
-      <p className="text-center">{title}</p>
-    </div>
+    <Link
+      to={`/vote/${encodeURIComponent(title)}`}
+      className={`${bgColor} p-4 rounded-lg shadow-lg hover:scale-105 transition-transform duration-150`}
+    >
+      <div>
+        <img src={imageUrl} alt={title} className="w-full rounded-lg mb-4" />
+        <p className="text-center">{title}</p>
+      </div>
+    </Link>
   );
 };
 

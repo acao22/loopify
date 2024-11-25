@@ -1,5 +1,6 @@
 .App {
   text-align: center;
+  font-family: 'Gabarito', sans-serif; /* Default font for the app */
 }
 
 .App-logo {
@@ -24,9 +25,23 @@
   color: white;
 }
 
+.App-title {
+  font-family: 'DynaPuff', cursive; 
+  font-size: 3rem;
+}
+
 .App-link {
   color: #61dafb;
 }
+
+.font-dynapuff {
+  font-family: 'DynaPuff', cursive;
+}
+
+.font-gabarito {
+  font-family: 'Gabarito', sans-serif;
+}
+
 
 @keyframes App-logo-spin {
   from {

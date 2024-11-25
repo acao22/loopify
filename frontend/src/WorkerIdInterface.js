@@ -16,7 +16,7 @@ function WorkerIdInterface() {
     };
 
     return (
-        <div className="flex flex-col items-center justify-center bg-gradient-to-b from-[#4D9B0E] to-[#1A3505] min-h-screen p-6">
+        <div className="flex flex-col items-center justify-center bg-gradient-to-b-custom min-h-screen p-6">
             <div className="w-full max-w-md bg-white rounded-lg shadow-md p-6">
                 <h2 className="text-2xl font-bold text-center mb-6">Vote on Song Fit</h2>
 

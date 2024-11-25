@@ -2,20 +2,22 @@
 @tailwind components;
 @tailwind utilities;
 
-@font-face {
-  font-family: 'Gabarito';
-  src: url('../public/Gabarito-VariableFont_wght.ttf') format('truetype');
-  font-weight: 100 900; 
-  font-style: normal;
-}
-
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+  font-family: 'Gabarito', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto',
+    'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.font-dynapuff {
+  font-family: 'DynaPuff', cursive;
+}
+
+.App-title {
+  font-family: 'DynaPuff', cursive; 
+  font-size: 3rem;
 }
 
 code {
