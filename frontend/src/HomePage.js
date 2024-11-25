@@ -3,11 +3,15 @@ import Navbar from "./Navbar";
 import { Link } from "react-router-dom";
 import { MagnifyingGlass, ArrowRight } from "phosphor-react";
 import { Autocomplete, TextField } from "@mui/material";
+import Footer from "./Footer";
 
 const HomePage = () => {
   const playlists = [
     { title: "hitting the gym", bgColor: "bg-orange-500" },
-    { title: "getting over a three week-long situationship", bgColor: "bg-blue-400" },
+    {
+      title: "getting over a three week-long situationship",
+      bgColor: "bg-blue-400",
+    },
     { title: "walking 30 minutes to trader joe’s", bgColor: "bg-green-300" },
     { title: "locking in before 11:59 PM deadline", bgColor: "bg-teal-600" },
   ];
@@ -74,14 +78,28 @@ const HomePage = () => {
           </div>
 
           {/* Vote Button */}
-          {selectedPlaylist && (
-            <Link to={`/vote/${encodeURIComponent(selectedPlaylist)}`}>
-              <button className="bg-[#76B247] text-white font-semibold py-3 px-6 rounded-3xl shadow-lg hover:bg-[#2E5D09] flex items-center space-x-2">
-                <span>Vote</span>
-                <ArrowRight size={20} weight="bold" />
-              </button>
-            </Link>
-          )}
+          <Link
+            to={
+              selectedPlaylist
+                ? `/vote/${encodeURIComponent(selectedPlaylist)}`
+                : "#"
+            }
+            onClick={(e) => {
+              if (!selectedPlaylist) e.preventDefault();
+            }}
+          >
+            <button
+              className={`py-3 px-6 rounded-3xl shadow-lg flex items-center space-x-2 font-semibold ${
+                selectedPlaylist
+                  ? "bg-[#76B247] text-white hover:bg-[#2E5D09] cursor-pointer"
+                  : "bg-gray-300 text-gray-600 cursor-not-allowed"
+              }`}
+              disabled={!selectedPlaylist}
+            >
+              <span>Vote</span>
+              <ArrowRight size={20} weight="bold" />
+            </button>
+          </Link>
         </div>
       </header>
 
@@ -101,6 +119,9 @@ const HomePage = () => {
           ))}
         </div>
       </section>
+
+      {/* Footer */}
+      <Footer />
     </div>
   );
 };
@@ -110,7 +131,7 @@ const PlaylistCard = ({ title, imageUrl, bgColor }) => {
   return (
     <Link
       to={`/vote/${encodeURIComponent(title)}`}
-      className={`${bgColor} p-4 rounded-lg shadow-lg hover:scale-105 transition-transform duration-150`}
+      className={`${bgColor} p-4 rounded-lg shadow-lg hover:scale-105 transition-transform duration-150 mb-8`}
     >
       <div>
         <img src={imageUrl} alt={title} className="w-full rounded-lg mb-4" />

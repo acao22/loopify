@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import Navbar from "./Navbar";
 import { Sparkle, CaretLeft } from "phosphor-react";
+import Footer from "./Footer";
 
 function VotingInterface() {
   const navigate = useNavigate();
@@ -179,7 +180,7 @@ function VotingInterface() {
       <Navbar />
       <Link
         to="/"
-        className="absolute top-30 left-12 py-6 cursor-pointer flex items-center space-x-2 text-white hover:text-gray-500"
+        className="fixed top-30 left-12 py-6 cursor-pointer flex items-center space-x-2 text-white hover:text-gray-500"
       >
         <CaretLeft size={24} weight="bold" />
         <span className="font-medium">Back</span>
@@ -193,7 +194,7 @@ function VotingInterface() {
           </button>
         </Link>
       </div>
-      <div className="flex flex-col items-center justify-center p-6">
+      <div className="flex flex-col items-center justify-start p-6 min-h-[calc(100vh+50px)]">
         <h1 className="text-3xl font-bold text-white mb-6">
           Help build our playlists
         </h1>
@@ -276,6 +277,7 @@ function VotingInterface() {
           )}
         </div>
       </div>
+      <Footer />
     </div>
   );
 }
