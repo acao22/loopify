@@ -43,13 +43,58 @@ function VotingInterface() {
 
       const data = await response.json();
       setAccessToken(data.access_token);
-      fetchSongs(data.access_token); // Fetch song previews after receiving token
+      fetchSongs(data.access_token);
     } catch (error) {
       console.error("Error fetching Spotify access token:", error);
     }
   };
 
+  
+  /*
+
+  const fetchSongs = async (token) => {
+    try {
+      // Spotify Global Top 50 Playlist ID
+      const topPlaylistId = "37i9dQZF1DXcBWIGoYBM5M"; // Replace with any top playlist ID
+  
+      // Fetch the playlist details
+      const playlistResponse = await fetch(
+        `https://api.spotify.com/v1/playlists/${topPlaylistId}/tracks`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+  
+      const playlistData = await playlistResponse.json();
+      const tracks = playlistData.items;
+  
+      const songPromises = tracks.slice(0, 50).map(async (item) => {
+        const track = item.track;
+        return {
+          title: track.name,
+          artist: track.artists[0]?.name,
+          imageUrl: track.album?.images[0]?.url || "",
+          previewUrl: track.preview_url || "",
+          spotifyId: track.id,
+          duration: formatDuration(track.duration_ms || 0),
+        };
+      });
+  
+      const fetchedSongs = await Promise.all(songPromises);
+  
+      setSongs(fetchedSongs);
+    } catch (error) {
+      console.error("Error fetching top songs from Spotify:", error);
+    }
+  };
+  */
+  
+  
+
   // Fetch songs from Spotify API
+  
   const fetchSongs = async (token) => {
     try {
       const trackQueries = [
@@ -105,6 +150,7 @@ function VotingInterface() {
       console.error("Error fetching songs from Spotify:", error);
     }
   };
+
 
   // Format duration from milliseconds to mm:ss
   const formatDuration = (ms) => {
