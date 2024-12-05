@@ -5,6 +5,7 @@ import WorkerIdInterface from './WorkerIdInterface';
 import VotingInterface from './VotingInterface';
 import GenerateSong from './GenerateSong';
 import ThankYouScreen from "./ThankYouScreen";
+import PlaylistInterface from "./PlaylistInterface.tsx";
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
         <Route path="/vote/:playlistName" element={<VotingInterface />} />
         <Route path="/generateSong" element={<GenerateSong />} />
         <Route path="/thank-you" element={<ThankYouScreen />} />
+        <Route path="/playlist" element={< PlaylistInterface />} />
       </Routes>
     </Router>
   );
