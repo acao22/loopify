@@ -5,6 +5,15 @@ import { Sparkle, CaretLeft } from "phosphor-react";
 import Footer from "./Footer";
 import { Buffer } from 'buffer';
 
+import SpotifyPlayer from 'react-spotify-player';
+
+const size = {
+  width: '100%',
+  height: 400,
+};
+const view = 'list'; // or 'coverart'
+const theme = 'black'; // or 'white'
+
 function VotingInterface() {
   const navigate = useNavigate();
   const { playlistName } = useParams();
@@ -63,10 +72,19 @@ function VotingInterface() {
     }
   };
 
+  const topPlaylistIds = [
+    "774kUuKDzLa8ieaSmi8IfS", // Global Top 50
+    "6FSUihgGqPgH1eNYZN2jGB", // Random
+    "7qf1aRjaEYCc9tmgVqji6K", // Frat songs that could resurrect me
+    "6ZUP9durXygrFw9mn5fC68", // Top hits 2000 to now
+    "6bylhv1iSmMylVzgeWTtkb", // Top House music
+  ];
+
   const fetchSongs = async (token) => {
     try {
-      // Spotify Global Top 50 Playlist ID
-      const topPlaylistId = "774kUuKDzLa8ieaSmi8IfS"; // Replace with any top playlist ID
+      
+      // Choose a random song from topPlaylistIds
+      const topPlaylistId = topPlaylistIds[Math.floor(Math.random() * topPlaylistIds.length)];
   
       // Fetch the playlist details
       const playlistResponse = await fetch(
@@ -235,6 +253,10 @@ function VotingInterface() {
 
   const currentSong = songs[currentSongIndex];
 
+  useEffect(() => {
+    console.log(JSON.stringify(currentSong));
+  }, [currentSong]);
+
   return (
     <div className="bg-gradient-to-b-custom min-h-screen">
       <Navbar />
@@ -267,10 +289,16 @@ function VotingInterface() {
           {currentSong && (
             <>
               {/* Album Art */}
-              <img
+              {/* <img
                 src={currentSong.imageUrl}
                 alt={currentSong.title}
                 className="w-full mx-auto mb-6"
+              /> */}
+              <SpotifyPlayer
+                uri={"spotify:track:" + currentSong.spotifyId}
+                size={size}
+                view={view}
+                theme={theme}
               />
               {/* Song Title and Artist */}
               <div className="flex justify-between items-center mb-2">
@@ -288,9 +316,9 @@ function VotingInterface() {
                 </audio>
               ) : (
                 <div className="mb-4 flex">
-                  <p className="text-sm text-gray-500 mb-2">
+                  {/* <p className="text-sm text-gray-500 mb-2">
                     Preview not available.
-                  </p>
+                  </p> */}
                   <a
                     href={`https://open.spotify.com/track/${currentSong.spotifyId}`}
                     target="_blank"
