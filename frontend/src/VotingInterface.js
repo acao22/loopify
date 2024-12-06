@@ -3,6 +3,7 @@ import { useParams, Link, useNavigate } from "react-router-dom";
 import Navbar from "./Navbar";
 import { Sparkle, CaretLeft } from "phosphor-react";
 import Footer from "./Footer";
+import { Buffer } from 'buffer';
 
 function VotingInterface() {
   const navigate = useNavigate();
@@ -32,30 +33,40 @@ function VotingInterface() {
       const clientId = process.env.REACT_APP_SPOTIFY_CLIENT_ID;
       const clientSecret = process.env.REACT_APP_SPOTIFY_CLIENT_SECRET;
 
+      // console.log(clientId);
+      // console.log(clientSecret);
+
+      if (!clientId || !clientSecret) {
+        throw new Error("Client ID or Client Secret is missing");
+      }
+  
       const response = await fetch("https://accounts.spotify.com/api/token", {
         method: "POST",
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
-          Authorization: `Basic ${btoa(`${clientId}:${clientSecret}`)}`,
+          "Authorization": `Basic ${Buffer.from(`${clientId}:${clientSecret}`).toString("base64")}`,
         },
         body: "grant_type=client_credentials",
       });
-
+  
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error("Spotify API Error:", errorData);
+        throw new Error(errorData.error_description || "Failed to fetch access token");
+      }
+  
       const data = await response.json();
       setAccessToken(data.access_token);
       fetchSongs(data.access_token);
     } catch (error) {
-      console.error("Error fetching Spotify access token:", error);
+      console.error("Error fetching Spotify access token:", error.message);
     }
   };
-
-  
-  /*
 
   const fetchSongs = async (token) => {
     try {
       // Spotify Global Top 50 Playlist ID
-      const topPlaylistId = "37i9dQZF1DXcBWIGoYBM5M"; // Replace with any top playlist ID
+      const topPlaylistId = "774kUuKDzLa8ieaSmi8IfS"; // Replace with any top playlist ID
   
       // Fetch the playlist details
       const playlistResponse = await fetch(
@@ -68,10 +79,16 @@ function VotingInterface() {
       );
   
       const playlistData = await playlistResponse.json();
+
+      console.log(playlistData);
+
       const tracks = playlistData.items;
+
+      console.log(tracks);
   
       const songPromises = tracks.slice(0, 50).map(async (item) => {
         const track = item.track;
+        console.log("track object: " + JSON.stringify(track));
         return {
           title: track.name,
           artist: track.artists[0]?.name,
@@ -89,67 +106,64 @@ function VotingInterface() {
       console.error("Error fetching top songs from Spotify:", error);
     }
   };
-  */
-  
-  
 
   // Fetch songs from Spotify API
   
-  const fetchSongs = async (token) => {
-    try {
-      const trackQueries = [
-        { title: "Blinding Lights", artist: "The Weeknd" },
-        { title: "Levitating", artist: "Dua Lipa" },
-        { title: "Uptown Funk", artist: "Mark Ronson" },
-        { title: "Rolling in the Deep", artist: "Adele" },
-        { title: "Take Me to Church", artist: "Hozier" },
-        { title: "Watermelon Sugar", artist: "Harry Styles" },
-        { title: "Dance Monkey", artist: "Tones and I" },
-        { title: "Bad Guy", artist: "Billie Eilish" },
-        { title: "Señorita", artist: "Shawn Mendes" },
-        { title: "Perfect", artist: "Ed Sheeran" },
-        { title: "Stay", artist: "The Kid LAROI" },
-        { title: "Closer", artist: "The Chainsmokers" },
-        { title: "Someone Like You", artist: "Adele" },
-        { title: "Save Your Tears", artist: "The Weeknd" },
-        { title: "Shallow", artist: "Lady Gaga" },
-        { title: "Peaches", artist: "Justin Bieber" },
-        { title: "Montero (Call Me By Your Name)", artist: "Lil Nas X" },
-        { title: "Old Town Road", artist: "Lil Nas X" },
-        { title: "Happier Than Ever", artist: "Billie Eilish" },
-      ];
+  // const fetchSongs = async (token) => {
+  //   try {
+  //     const trackQueries = [
+  //       { title: "Blinding Lights", artist: "The Weeknd" },
+  //       { title: "Levitating", artist: "Dua Lipa" },
+  //       { title: "Uptown Funk", artist: "Mark Ronson" },
+  //       { title: "Rolling in the Deep", artist: "Adele" },
+  //       { title: "Take Me to Church", artist: "Hozier" },
+  //       { title: "Watermelon Sugar", artist: "Harry Styles" },
+  //       { title: "Dance Monkey", artist: "Tones and I" },
+  //       { title: "Bad Guy", artist: "Billie Eilish" },
+  //       { title: "Señorita", artist: "Shawn Mendes" },
+  //       { title: "Perfect", artist: "Ed Sheeran" },
+  //       { title: "Stay", artist: "The Kid LAROI" },
+  //       { title: "Closer", artist: "The Chainsmokers" },
+  //       { title: "Someone Like You", artist: "Adele" },
+  //       { title: "Save Your Tears", artist: "The Weeknd" },
+  //       { title: "Shallow", artist: "Lady Gaga" },
+  //       { title: "Peaches", artist: "Justin Bieber" },
+  //       { title: "Montero (Call Me By Your Name)", artist: "Lil Nas X" },
+  //       { title: "Old Town Road", artist: "Lil Nas X" },
+  //       { title: "Happier Than Ever", artist: "Billie Eilish" },
+  //     ];
 
-      const songPromises = trackQueries.map(async (track) => {
-        const response = await fetch(
-          `https://api.spotify.com/v1/search?q=track:${encodeURIComponent(
-            track.title
-          )}%20artist:${encodeURIComponent(track.artist)}&type=track&limit=1`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
+  //     const songPromises = trackQueries.map(async (track) => {
+  //       const response = await fetch(
+  //         `https://api.spotify.com/v1/search?q=track:${encodeURIComponent(
+  //           track.title
+  //         )}%20artist:${encodeURIComponent(track.artist)}&type=track&limit=1`,
+  //         {
+  //           headers: {
+  //             Authorization: `Bearer ${token}`,
+  //           },
+  //         }
+  //       );
 
-        const data = await response.json();
-        const trackInfo = data.tracks.items[0];
+  //       const data = await response.json();
+  //       const trackInfo = data.tracks.items[0];
 
-        return {
-          title: trackInfo?.name || track.title,
-          artist: trackInfo?.artists[0]?.name || track.artist,
-          imageUrl: trackInfo?.album?.images[0]?.url || "",
-          previewUrl: trackInfo?.preview_url || "",
-          spotifyId: trackInfo?.id || "", // Track ID for Spotify link
-          duration: formatDuration(trackInfo?.duration_ms || 0),
-        };
-      });
+  //       return {
+  //         title: trackInfo?.name || track.title,
+  //         artist: trackInfo?.artists[0]?.name || track.artist,
+  //         imageUrl: trackInfo?.album?.images[0]?.url || "",
+  //         previewUrl: trackInfo?.preview_url || "",
+  //         spotifyId: trackInfo?.id || "", // Track ID for Spotify link
+  //         duration: formatDuration(trackInfo?.duration_ms || 0),
+  //       };
+  //     });
 
-      const fetchedSongs = await Promise.all(songPromises);
-      setSongs(fetchedSongs);
-    } catch (error) {
-      console.error("Error fetching songs from Spotify:", error);
-    }
-  };
+  //     const fetchedSongs = await Promise.all(songPromises);
+  //     setSongs(fetchedSongs);
+  //   } catch (error) {
+  //     console.error("Error fetching songs from Spotify:", error);
+  //   }
+  // };
 
 
   // Format duration from milliseconds to mm:ss
