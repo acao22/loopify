@@ -223,6 +223,8 @@ function VotingInterface() {
           votes,
         }),
       });
+      
+      console.log("Response: " + response);
 
       if (response.ok) {
         setMessage("All votes submitted successfully!");
