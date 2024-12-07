@@ -211,7 +211,7 @@ function VotingInterface() {
 
   const submitVotes = async () => {
     try {
-      const response = await fetch("http://localhost:5001/api/vote", {
+      const response = await fetch("https://loopify-backend.vercel.app/api/vote", {
         mode: "cors",
         method: "POST",
         headers: {
