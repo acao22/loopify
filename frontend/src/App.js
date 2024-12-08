@@ -6,12 +6,14 @@ import VotingInterface from './VotingInterface';
 import GenerateSong from './GenerateSong';
 import ThankYouScreen from "./ThankYouScreen";
 import PlaylistInterface from "./PlaylistInterface.tsx";
+import PlaylistResults from "./PlaylistResults";
 
 function App() {
   return (
     <Router>
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route path="/playlists-results" element={<PlaylistResults />} />
         <Route path="/workeridinterface" element={<WorkerIdInterface />} />
         <Route path="/vote/:playlistName" element={<VotingInterface />} />
         <Route path="/generateSong" element={<GenerateSong />} />

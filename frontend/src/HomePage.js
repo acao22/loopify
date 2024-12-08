@@ -1,12 +1,15 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 import Navbar from "./components/Navbar";
 import { Link } from "react-router-dom";
-import { MagnifyingGlass, ArrowRight } from "phosphor-react";
+import { MagnifyingGlass } from "phosphor-react";
 import { Autocomplete, TextField } from "@mui/material";
 import Footer from "./Footer";
+import Modal from "@mui/material/Modal";
+import Box from "@mui/material/Box";
 
 const HomePage = () => {
-  const playlists = [
+  const [playlists, setPlaylists] = useState([
     { title: "hitting the gym", bgColor: "bg-orange-500" },
     {
       title: "getting over a three week-long situationship",
@@ -14,9 +17,32 @@ const HomePage = () => {
     },
     { title: "walking 30 minutes to trader joe’s", bgColor: "bg-green-300" },
     { title: "locking in before 11:59 PM deadline", bgColor: "bg-teal-600" },
-  ];
-
+  ]);
   const [selectedPlaylist, setSelectedPlaylist] = useState("");
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [newPlaylistTitle, setNewPlaylistTitle] = useState("");
+
+  // Fetch playlists from the backend
+  useEffect(() => {
+    axios
+      .get("http://localhost:5001/api/playlists")
+      .then((response) => setPlaylists(response.data))
+      .catch((error) => console.error("Error fetching playlists:", error));
+  }, []);
+
+  // Add a new playlist
+  const handleAddPlaylist = () => {
+    if (newPlaylistTitle.trim()) {
+      axios
+        .post("http://localhost:5001/api/playlists", { title: newPlaylistTitle })
+        .then((response) => {
+          setPlaylists((prev) => [...prev, response.data.playlist]); // Update state with new playlist
+          setNewPlaylistTitle("");
+          setIsModalOpen(false);
+        })
+        .catch((error) => console.error("Error adding playlist:", error));
+    }
+  };
 
   return (
     <div className="bg-gradient-to-b-custom min-h-screen font-gabarito">
@@ -25,7 +51,7 @@ const HomePage = () => {
 
       {/* Header Section */}
       <header className="text-white p-6">
-        <h1 className="text-7xl font-bold text-center mt-40 mb-2 font-dynapuff">
+        <h1 className="text-7xl font-bold text-center mb-2 font-dynapuff">
           loopify
         </h1>
         <p className="text-center text-xl text-[#2E5D09] font-semibold">
@@ -77,7 +103,7 @@ const HomePage = () => {
             />
           </div>
 
-          {/* Vote Button */}
+          {/* Vote Button
           <Link
             to={
               selectedPlaylist
@@ -98,6 +124,21 @@ const HomePage = () => {
             >
               <span>Vote</span>
               <ArrowRight size={20} weight="bold" />
+            </button>
+          </Link> */}
+
+          {/* Add Your Own Button */}
+          <button
+            className="py-3 px-6 rounded-3xl shadow-lg flex items-center space-x-2 font-semibold bg-[#76B247] text-white hover:bg-[#2E5D09] cursor-pointer"
+            onClick={() => setIsModalOpen(true)}
+          >
+            <span>Add Your Own</span>
+          </button>
+
+          {/* View Playlist Results Button */}
+          <Link to="/playlists-results">
+            <button className="py-3 px-6 rounded-3xl shadow-lg flex items-center space-x-2 font-semibold bg-blue-500 text-white hover:bg-blue-600 cursor-pointer">
+              <span>View Playlist Results</span>
             </button>
           </Link>
         </div>
@@ -122,6 +163,55 @@ const HomePage = () => {
 
       {/* Footer */}
       <Footer />
+
+      {/* Add Playlist Modal */}
+      <Modal open={isModalOpen} onClose={() => setIsModalOpen(false)}>
+  <Box
+    className="bg-white p-8 rounded-2xl shadow-2xl mx-auto mt-20 w-11/12 sm:w-2/3 lg:w-1/3"
+    sx={{
+      outline: "none",
+      boxShadow: "0px 10px 30px rgba(0, 0, 0, 0.1)",
+      transition: "transform 0.3s ease, opacity 0.3s ease",
+      transform: isModalOpen ? "scale(1)" : "scale(0.95)",
+      opacity: isModalOpen ? 1 : 0,
+    }}
+  >
+    <h2 className="text-3xl font-bold text-gray-800 mb-6 text-center">
+      Add a New Playlist
+    </h2>
+    <TextField
+      fullWidth
+      variant="outlined"
+      placeholder="Enter playlist name"
+      value={newPlaylistTitle}
+      onChange={(e) => setNewPlaylistTitle(e.target.value)}
+      className="mb-6"
+      sx={{
+        "& .MuiOutlinedInput-root": {
+          borderRadius: "15px",
+        },
+        "& .MuiOutlinedInput-input": {
+          padding: "14px",
+        },
+      }}
+    />
+    <div className="flex justify-center space-x-6 mt-6">
+      <button
+        className="py-3 px-6 rounded-full bg-gray-300 hover:bg-gray-400 text-black shadow-md transition duration-200"
+        onClick={() => setIsModalOpen(false)}
+      >
+        Cancel
+      </button>
+      <button
+        className="py-3 px-6 rounded-full bg-[#76B247] hover:bg-[#2E5D09] text-white shadow-md transition duration-200"
+        onClick={handleAddPlaylist}
+      >
+        Add Playlist
+      </button>
+    </div>
+  </Box>
+</Modal>
+
     </div>
   );
 };

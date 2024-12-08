@@ -4,8 +4,9 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 require('dotenv').config();
 
-// vote model
+// models
 const Vote = require('./models/Vote');
+const Playlist = require("./models/Playlist");
 
 const app = express();
 app.use(cors());
@@ -32,6 +33,36 @@ app.get('/api/vote', async (req, res) => {
     }
 });
 
+// Get all playlists
+app.get('/api/playlists', async (req, res) => {
+    try {
+      const playlists = await Playlist.find(); // Fetch playlists from MongoDB
+      res.status(200).json(playlists);
+    } catch (error) {
+      console.error("Error fetching playlists:", error);
+      res.status(500).json({ message: "Error fetching playlists" });
+    }
+  });
+  
+  // Add a new playlist
+  app.post('/api/playlists', async (req, res) => {
+    const { title } = req.body;
+  
+    // Validate the title
+    if (!title || title.trim() === '') {
+      return res.status(400).json({ message: "Playlist title is required" });
+    }
+  
+    try {
+      const newPlaylist = new Playlist({ title }); // Create new playlist document
+      await newPlaylist.save(); // Save to MongoDB
+      res.status(201).json({ message: "Playlist added successfully", playlist: newPlaylist });
+    } catch (error) {
+      console.error("Error adding playlist:", error);
+      res.status(500).json({ message: "Error adding playlist" });
+    }
+  });  
+
 // submit/update votes
 app.post('/api/vote', async (req, res) => {
     const { workerId, playlist, votes } = req.body;
@@ -39,6 +70,12 @@ app.post('/api/vote', async (req, res) => {
     try {
         // test log incoming data
         console.log('Request body:', req.body); 
+
+        // validate playlist exists in Playlist collection
+        const existingPlaylist = await Playlist.findOne({ title: playlist });
+        if (!existingPlaylist) {
+            return res.status(400).json({ message: "Invalid playlist" });
+        }
 
         // validating input
         if (!workerId || !playlist || !votes || !Array.isArray(votes)) {
