@@ -21,7 +21,7 @@ export function PlaylistHeader({ playlist }: PlaylistHeaderProps) {
           ))}
         </div>
       </div>
-      
+
       <div className="flex-1">
         <h1 className="text-4xl font-bold mb-2">{playlist.name}</h1>
         <p className="text-gray-600 mb-4">{playlist.description}</p>
@@ -31,7 +31,7 @@ export function PlaylistHeader({ playlist }: PlaylistHeaderProps) {
           <span>{playlist.songCount} songs,</span>
           <span>{playlist.duration}</span>
         </div>
-        
+
         <div className="flex items-center gap-4 mt-6">
           <button className="bg-black text-white px-8 py-3 rounded-full flex items-center gap-2 hover:bg-gray-800 transition">
             <Play size={20} fill="white" />

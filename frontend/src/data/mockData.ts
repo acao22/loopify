@@ -1,7 +1,8 @@
-export const playlistData = {
-    id: "swifty",
-    name: "Swifty",
-    description: "Description of the playlist vibes",
+export const mockPlaylists = [
+  {
+    id: "workout",
+    name: "Hitting The Gym",
+    description: "High-energy tracks to fuel your workouts.",
     lastUpdated: "Nov 19 2023",
     duration: "10 hours 10 minutes",
     songCount: 48,
@@ -9,36 +10,102 @@ export const playlistData = {
       "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=500",
       "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=500",
       "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=500",
-      "https://images.unsplash.com/photo-1459749411175-04bf5292ceea?w=500"
-    ]
-  };
-  
-  export const songsData = [
-    {
-      id: "1",
-      title: "Shake It Off",
-      artist: "Taylor Swift",
-      album: "1989",
-      duration: "3:39",
-      addedDate: "Nov 21, 2023",
-      coverUrl: "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=500"
-    },
-    {
-      id: "2",
-      title: "Anti-Hero",
-      artist: "Taylor Swift",
-      album: "Midnights",
-      duration: "3:21",
-      addedDate: "Nov 21, 2023",
-      coverUrl: "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=500"
-    },
-    {
-      id: "3",
-      title: "Love Story",
-      artist: "Taylor Swift",
-      album: "Fearless",
-      duration: "3:55",
-      addedDate: "Nov 21, 2023",
-      coverUrl: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=500"
-    }
-  ];
+      "https://images.unsplash.com/photo-1459749411175-04bf5292ceea?w=500",
+    ],
+    songs: [
+      {
+        id: "1",
+        title: "Shake It Off",
+        artist: "Taylor Swift",
+        album: "1989",
+        duration: "3:39",
+        addedDate: "Nov 21, 2023",
+        coverUrl: "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=500",
+      },
+      {
+        id: "2",
+        title: "Anti-Hero",
+        artist: "Taylor Swift",
+        album: "Midnights",
+        duration: "3:21",
+        addedDate: "Nov 21, 2023",
+        coverUrl: "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=500",
+      },
+    ],
+  },
+  {
+    id: "situationship",
+    name: "Getting Over A Three-Week Long Situationship",
+    description: "Empowering and healing tracks for moving on.",
+    lastUpdated: "Dec 8 2024",
+    duration: "2 hours 30 minutes",
+    songCount: 30,
+    coverImages: [
+      "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=500",
+      "https://images.unsplash.com/photo-1508737027453-cf82484b2f25?w=500",
+      "https://images.unsplash.com/photo-1520072959219-c595dc870360?w=500",
+      "https://images.unsplash.com/photo-1532012197267-da84d127e765?w=500",
+    ],
+    songs: [
+      {
+        id: "1",
+        title: "Eye of the Tiger",
+        artist: "Survivor",
+        album: "Rocky III",
+        duration: "4:04",
+        addedDate: "Nov 15, 2023",
+        coverUrl: "https://images.unsplash.com/photo-1532012197267-da84d127e765?w=500",
+      },
+    ],
+  },
+  {
+    id: "trader-joes",
+    name: "Walking 30 Minutes to Trader Joe’s",
+    description: "Relaxed and upbeat tracks for long strolls.",
+    lastUpdated: "Dec 7 2024",
+    duration: "1 hour 45 minutes",
+    songCount: 25,
+    coverImages: [
+      "https://images.unsplash.com/photo-1522202180981-7c97c2c18b8d?w=500",
+      "https://images.unsplash.com/photo-1542909168-8d5dcb3b9e10?w=500",
+      "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=500",
+      "https://images.unsplash.com/photo-1518791841217-8f162f1e1131?w=500",
+    ],
+    songs: [
+      {
+        id: "1",
+        title: "Here Comes The Sun",
+        artist: "The Beatles",
+        album: "Abbey Road",
+        duration: "3:05",
+        addedDate: "Dec 7, 2024",
+        coverUrl: "https://images.unsplash.com/photo-1542909168-8d5dcb3b9e10?w=500",
+      },
+    ],
+  },
+  {
+    id: "deadline",
+    name: "Locking In Before 11:59 PM Deadline",
+    description: "Focused and energetic tracks to help you meet deadlines.",
+    lastUpdated: "Dec 6 2024",
+    duration: "3 hours 15 minutes",
+    songCount: 40,
+    coverImages: [
+      "https://images.unsplash.com/photo-1531251445707-1f000e1e87d0?w=500",
+      "https://images.unsplash.com/photo-1513836279014-a89f7a76ae86?w=500",
+      "https://images.unsplash.com/photo-1529059997568-3d4e96c8adcf?w=500",
+      "https://images.unsplash.com/photo-1511407397940-d57f68e81203?w=500",
+    ],
+    songs: [
+      {
+        id: "1",
+        title: "Lose Yourself",
+        artist: "Eminem",
+        album: "8 Mile",
+        duration: "5:26",
+        addedDate: "Dec 6, 2024",
+        coverUrl: "https://images.unsplash.com/photo-1513836279014-a89f7a76ae86?w=500",
+      },
+    ],
+  },
+];
