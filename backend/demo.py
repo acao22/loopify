@@ -1,6 +1,6 @@
 import pandas as pd
 from quality_control import QualityControl
-from aggregate import PlaylistAggregator
+from backend.aggregateOld import PlaylistAggregator
 
 def main():
     # Load and clean the test data
