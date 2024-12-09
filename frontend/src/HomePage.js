@@ -23,21 +23,6 @@ const HomePage = () => {
       {/* Navbar */}
       <Navbar />
 
-      {/* <div className="p-8">
-      <h1 className="text-3xl font-bold mb-6">Playlists</h1>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {playlists.map((playlist) => (
-          <Link
-            key={playlist.title}
-            to={`/playlist/${encodeURIComponent(playlist.title)}`}
-            className={`${playlist.bgColor} p-6 rounded-lg shadow-md text-white hover:opacity-90 transition`}
-          >
-            <h2 className="text-xl font-semibold">{playlist.title}</h2>
-          </Link>
-        ))}
-      </div>
-    </div> */}
-
       {/* Header Section */}
       <header className="text-white p-6">
         <h1 className="text-7xl font-bold text-center mt-10 mb-2 font-dynapuff">
@@ -132,6 +117,14 @@ const HomePage = () => {
             </button>
           </Link>
 
+          <Link to="/quality-control">
+            <button
+               className="py-3 px-6 rounded-3xl shadow-lg flex items-center space-x-2 font-semibold bg-teal-600 text-white hover:bg-[#2E5D09] cursor-pointer"
+               >
+              Quality Control Check
+            </button>
+          </Link>
+
 
         </div>
       </header>
@@ -164,6 +157,13 @@ const PlaylistCard = ({ title, imageUrl, bgColor }) => {
   return (
     <Link
       to={`/vote/${encodeURIComponent(title)}`}
+      // to={{
+      //   pathname: "/quality-control",
+      //   state: {
+      //     nextPath: `/vote/${encodeURIComponent(title)}`, // Target link
+      //     title, // Pass the title if needed
+      //   },
+      // }}
       className={`${bgColor} p-4 rounded-lg shadow-lg hover:scale-105 transition-transform duration-150 mb-8`}
     >
       <div>

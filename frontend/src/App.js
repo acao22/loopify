@@ -7,6 +7,7 @@ import GenerateSong from './GenerateSong';
 import ThankYouScreen from "./ThankYouScreen";
 import PlaylistInterface from "./PlaylistInterface.tsx";
 import Playlists from "./Playlists";
+import QualityControl from './QualityControl';
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
         {/* <Route path="/playlist" element={< PlaylistInterface />} /> */}
         <Route path="/playlists" element={<Playlists />} />
         <Route path="/playlist/:playlistName" element={<PlaylistInterface />} />
+        <Route path="/quality-control" element={<QualityControl />} />
 
       </Routes>
     </Router>
