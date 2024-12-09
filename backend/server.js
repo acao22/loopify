@@ -7,6 +7,9 @@ require('dotenv').config();
 // vote model
 const Vote = require('./models/Vote');
 
+// Song model
+const Song = require('./models/Song');
+
 const app = express();
 app.use(cors());
 app.use(bodyParser.json());
@@ -76,6 +79,107 @@ app.post('/api/vote', async (req, res) => {
         res.status(500).json({ message: 'Error saving vote', error: error.message });
     }
 });
+
+// Get list of available playlists
+app.get('/api/playlists', async (req, res) => {
+    try {
+        // Get unique playlists from votes
+        const votes = await Vote.find();
+        const playlists = [...new Set(votes.map(vote => vote.playlist))];
+        res.status(200).json(playlists);
+    } catch (error) {
+        console.error('Error fetching playlists:', error);
+        res.status(500).json({ message: 'Error fetching playlists', error: error.message });
+    }
+});
+
+// Get songs for a specific playlist
+app.get('/api/playlists/:playlist/songs', async (req, res) => {
+    try {
+        const { playlist } = req.params;
+        
+        // Get all votes for this playlist
+        const votes = await Vote.find({ playlist });
+        
+        // Quality control implementation
+        const validatedSongs = validateSongs(votes, 0.6);
+        
+        res.status(200).json(validatedSongs);
+    } catch (error) {
+        console.error('Error fetching playlist songs:', error);
+        res.status(500).json({ message: 'Error fetching playlist songs', error: error.message });
+    }
+});
+
+// Quality control helper functions
+function validateSongs(votes, threshold = 0.6) {
+    // First filter out low quality workers
+    const lowQualityWorkers = identifyLowQualityWorkers(votes);
+    const filteredVotes = votes.filter(vote => !lowQualityWorkers.includes(vote.workerId));
+    
+    // Calculate vote ratios for each song
+    const songVotes = {};
+    
+    filteredVotes.forEach(vote => {
+        vote.votes.forEach(v => {
+            if (!songVotes[v.song]) {
+                songVotes[v.song] = { positive: 0, total: 0 };
+            }
+            songVotes[v.song].total += 1;
+            if (v.vote === 1) {  // Assuming 1 is positive, -1 is negative
+                songVotes[v.song].positive += 1;
+            }
+        });
+    });
+    
+    // Filter songs based on threshold
+    const validatedSongs = Object.entries(songVotes)
+        .filter(([_, counts]) => (counts.positive / counts.total) >= threshold)
+        .map(([song, counts]) => ({
+            song,
+            confidence: counts.positive / counts.total
+        }));
+    
+    return validatedSongs;
+}
+
+function identifyLowQualityWorkers(votes, agreementThreshold = 0.3) {
+    const workerAgreements = {};
+    
+    // Calculate majority votes for each song
+    const songMajorities = {};
+    votes.forEach(vote => {
+        vote.votes.forEach(v => {
+            if (!songMajorities[v.song]) {
+                songMajorities[v.song] = { '1': 0, '-1': 0 };
+            }
+            songMajorities[v.song][v.vote.toString()] += 1;
+        });
+    });
+    
+    // Calculate worker agreement with majority
+    votes.forEach(vote => {
+        let agreements = 0;
+        let totalVotes = 0;
+        
+        vote.votes.forEach(v => {
+            const majorityVote = songMajorities[v.song]['1'] > songMajorities[v.song]['-1'] ? 1 : -1;
+            if (v.vote === majorityVote) {
+                agreements += 1;
+            }
+            totalVotes += 1;
+        });
+        
+        if (totalVotes > 0) {
+            const agreementRatio = agreements / totalVotes;
+            if (agreementRatio < agreementThreshold) {
+                workerAgreements[vote.workerId] = true;
+            }
+        }
+    });
+    
+    return Object.keys(workerAgreements);
+}
 
 const PORT = process.env.PORT || 5001;
 app.listen(PORT, () => {
