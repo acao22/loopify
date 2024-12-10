@@ -3,7 +3,7 @@
 **Team Members:** James Baker, Grace Thanglerdsumpan, Angie Cao, Jasper Zhu, Namita Sajai, Avi Upadhyaula
 
 **Description:**  
-Loopify is a music discovery platform that uses crowdsourcing to categorize songs into specific vibes. Users create theme-based playlist names, such as “road trip anthems” or “late-night thoughts,” and can vote on whether assigned songs fit the vibe. This platform allows users to collaboratively define playlist moods, making music discovery more community-driven and accurate.
+Loopify is a music discovery platform that uses crowdsourcing to categorize songs into specific vibes. Users create theme-based playlist names, such as "road trip anthems" or "late-night thoughts," and can vote on whether assigned songs fit the vibe. This platform allows users to collaboratively define playlist moods, making music discovery more community-driven and accurate.
 
 ---
 
@@ -29,21 +29,25 @@ Active users gain vibe-matched song recommendations and can earn badges like "Pl
 
 ## Quality Control and Aggregation Implementation
 
-Our quality control and aggregation modules can be found in `src/backend/quality_control.py` and `src/backend/aggregate.py` respectively.
+Our quality control and aggregation logic is implemented in the backend server (`server.js`).
 
-### Quality Control Module (`quality_control.py`)
+### Quality Control Module
 
-The quality control module implements a two-step approach to ensure data quality:
+The quality control system uses a two-step validation approach:
 
 1. **Worker Quality Assessment**: 
-   - Identifies low-quality workers by comparing their votes against majority opinions
-   - Workers with agreement rates below 30% are flagged and their votes are filtered out
-   - This helps remove potentially random or malicious voting patterns
+   - Implemented in `identifyLowQualityWorkers()` function
+   - Compares each worker's votes against majority opinions
+   - Workers with agreement rates below a specified threshold are flagged as low quality
+   - Their votes are filtered out from final calculations
+   - Helps prevent random or malicious voting patterns
 
 2. **Song Validation**:
-   - For each playlist, calculates the ratio of positive votes for each song
-   - Songs must receive at least 60% positive votes to be considered valid for a playlist
-   - Returns validated songs with their confidence scores
+   - Implemented in `validateSongs()` function 
+   - Calculates positive vote ratio for each song in a playlist
+   - Songs must exceed 50% positive votes (configurable threshold)
+   - Returns validated songs with confidence scores
+   - Confidence score = ratio of positive votes to total votes
 
 Future improvements planned:
 - Implement weighted voting based on worker reputation
