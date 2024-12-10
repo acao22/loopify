@@ -7,9 +7,6 @@ require('dotenv').config();
 // vote model
 const Vote = require('./models/Vote');
 
-// Song model
-const Song = require('./models/Song');
-
 const app = express();
 app.use(cors());
 app.use(bodyParser.json());
@@ -115,7 +112,7 @@ app.get('/api/playlists/:playlist/songs', async (req, res) => {
 });
 
 // Quality control helper functions
-function validateSongs(votes, threshold = 0.4) {
+function validateSongs(votes, threshold = 0.5) {
     // First filter out low quality workers
     const lowQualityWorkers = identifyLowQualityWorkers(votes);
     const filteredVotes = votes.filter(vote => !lowQualityWorkers.includes(vote.workerId));
