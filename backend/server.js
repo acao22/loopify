@@ -101,9 +101,12 @@ app.get('/api/playlists/:playlist/songs', async (req, res) => {
         // Get all votes for this playlist
         const votes = await Vote.find({ playlist });
         
-        // Quality control implementation
-        const validatedSongs = validateSongs(votes, 0.6);
+        // Run quality control validation
+        const validatedSongs = validateSongs(votes);
+        console.log('Validated songs:', validatedSongs);
+        console.log('Number of validated songs:', validatedSongs.length);
         
+        // Return validated songs with confidence scores
         res.status(200).json(validatedSongs);
     } catch (error) {
         console.error('Error fetching playlist songs:', error);
@@ -112,7 +115,7 @@ app.get('/api/playlists/:playlist/songs', async (req, res) => {
 });
 
 // Quality control helper functions
-function validateSongs(votes, threshold = 0.6) {
+function validateSongs(votes, threshold = 0.4) {
     // First filter out low quality workers
     const lowQualityWorkers = identifyLowQualityWorkers(votes);
     const filteredVotes = votes.filter(vote => !lowQualityWorkers.includes(vote.workerId));
@@ -126,7 +129,7 @@ function validateSongs(votes, threshold = 0.6) {
                 songVotes[v.song] = { positive: 0, total: 0 };
             }
             songVotes[v.song].total += 1;
-            if (v.vote === 1) {  // Assuming 1 is positive, -1 is negative
+            if (v.vote === 'yes') {
                 songVotes[v.song].positive += 1;
             }
         });
@@ -151,9 +154,9 @@ function identifyLowQualityWorkers(votes, agreementThreshold = 0.3) {
     votes.forEach(vote => {
         vote.votes.forEach(v => {
             if (!songMajorities[v.song]) {
-                songMajorities[v.song] = { '1': 0, '-1': 0 };
+                songMajorities[v.song] = { yes: 0, no: 0 };
             }
-            songMajorities[v.song][v.vote.toString()] += 1;
+            songMajorities[v.song][v.vote] += 1;
         });
     });
     
@@ -163,7 +166,7 @@ function identifyLowQualityWorkers(votes, agreementThreshold = 0.3) {
         let totalVotes = 0;
         
         vote.votes.forEach(v => {
-            const majorityVote = songMajorities[v.song]['1'] > songMajorities[v.song]['-1'] ? 1 : -1;
+            const majorityVote = songMajorities[v.song].yes > songMajorities[v.song].no ? 'yes' : 'no';
             if (v.vote === majorityVote) {
                 agreements += 1;
             }
