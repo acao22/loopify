@@ -15,7 +15,7 @@ export function SongList({ songs }: SongListProps) {
         <span>ALBUM</span>
         <Clock size={16} />
       </div>
-      
+
       <div className="divide-y">
         {songs.map((song, index) => (
           <div
@@ -24,11 +24,11 @@ export function SongList({ songs }: SongListProps) {
           >
             <span className="text-gray-400">{index + 1}</span>
             <div className="flex items-center gap-3">
-              <img
+              {/* <img
                 src={song.coverUrl}
                 alt=""
                 className="w-10 h-10 object-cover"
-              />
+              /> */}
               <div>
                 <div className="font-medium">{song.title}</div>
                 <div className="text-sm text-gray-500">{song.artist}</div>
